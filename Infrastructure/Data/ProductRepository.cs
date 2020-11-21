@@ -6,11 +6,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Data
 {
-	public class ProductRepository : IProductRepository
+	public class GenericRepository : IGenericRepository
 	{
 		private readonly StoreContext _context;
 
-		public ProductRepository(StoreContext context)
+		public GenericRepository(StoreContext context)
 		{
 			_context = context;
 		}

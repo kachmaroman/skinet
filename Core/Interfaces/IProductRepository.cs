@@ -4,7 +4,7 @@ using Core.Entities;
 
 namespace Core.Interfaces
 {
-	public interface IProductRepository
+	public interface IGenericRepository
 	{
 		Task<Product> GetProductByIdAsync(int id);
 
