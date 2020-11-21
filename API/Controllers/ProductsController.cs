@@ -1,34 +1,48 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Core.Entities;
-using Infrastructure.Data;
+using Core.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers
 {
 	[ApiController]
 	[Route("api/[controller]")]
+	[Produces("application/json")]
 	public class ProductsController : ControllerBase
 	{
-		private readonly StoreContext _storeContext;
+		private readonly IProductRepository _repository;
 
-		public ProductsController(StoreContext storeContext)
+		public ProductsController(IProductRepository repository)
 		{
-			_storeContext = storeContext;
+			_repository = repository;
 		}
 
 		[HttpGet]
-		public async Task<List<Product>> GetProductsAsync()
+		public async Task<ActionResult<IReadOnlyList<Product>>> GetProductsAsync()
 		{
-			return await _storeContext.Products.ToListAsync();
+			return Ok(await _repository.GetProductsAsync());
 		}
 
 		[HttpGet]
 		[Route("{id}")]
-		public async Task<Product> GetProductAsync([FromRoute] int id)
+		public async Task<ActionResult<Product>> GetProductAsync([FromRoute] int id)
 		{
-			return await _storeContext.Products.FindAsync(id);
+			return await _repository.GetProductByIdAsync(id);
+		}
+
+		[HttpGet]
+		[Route("brands")]
+		public async Task<ActionResult<IReadOnlyList<ProductBrand>>> GetProductBrandsAsync()
+		{
+			return Ok(await _repository.GetProductBrandsAsync());
+		}
+
+		[HttpGet]
+		[Route("types")]
+		public async Task<ActionResult<IReadOnlyList<ProductType>>> GetProductTypesAsync()
+		{
+			return Ok(await _repository.GetProductTypesAsync());
 		}
 	}
 }
