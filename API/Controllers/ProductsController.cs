@@ -23,9 +23,9 @@ namespace API.Controllers
 
 		[HttpGet]
 		[ProducesResponseType(StatusCodes.Status200OK)]
-		public async Task<ActionResult<List<ProductDto>>> GetProductsAsync(string sort)
+		public async Task<ActionResult<List<ProductDto>>> GetProductsAsync(string sort, int? brandId, int? typeId)
 		{
-			ProductsWithTypesAndBrandsSpecification specification = new ProductsWithTypesAndBrandsSpecification(sort);
+			ProductsWithTypesAndBrandsSpecification specification = new ProductsWithTypesAndBrandsSpecification(sort, brandId, typeId);
 
 			IReadOnlyList<Product> products = await _repository.GetListAsync(specification);
 
