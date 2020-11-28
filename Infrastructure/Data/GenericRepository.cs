@@ -25,6 +25,8 @@ namespace Infrastructure.Data
 
 		public async Task<IReadOnlyList<T>> GetListAsync(ISpecification<T> specification = null) => await ApplySpecification(specification).ToListAsync();
 
+		public async Task<int> CountAsync(ISpecification<T> specification) => await ApplySpecification(specification).CountAsync();
+
 		private IQueryable<T> ApplySpecification(ISpecification<T> specification) => SpecificationEvaluator<T>.GetQuery(_context.Set<T>().AsQueryable(), specification);
 	}
 }

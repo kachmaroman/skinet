@@ -3,6 +3,7 @@ using System.Net;
 using System.Threading.Tasks;
 using API.Dtos;
 using API.Errors;
+using API.Helpers;
 using AutoMapper;
 using Core.Entities;
 using Core.Interfaces;
@@ -23,13 +24,19 @@ namespace API.Controllers
 
 		[HttpGet]
 		[ProducesResponseType(StatusCodes.Status200OK)]
-		public async Task<ActionResult<List<ProductDto>>> GetProductsAsync(string sort, int? brandId, int? typeId)
+		public async Task<ActionResult<Pagination<ProductDto>>> GetProductsAsync([FromQuery] ProductSpecParams productParams)
 		{
-			ProductsWithTypesAndBrandsSpecification specification = new ProductsWithTypesAndBrandsSpecification(sort, brandId, typeId);
+			ProductsWithTypesAndBrandsSpecification specification = new ProductsWithTypesAndBrandsSpecification(productParams);
+
+			ProductWithFiltersForCountSpecification countSpecification = new ProductWithFiltersForCountSpecification(productParams);
+
+			int totalItems = await _repository.CountAsync(countSpecification);
 
 			IReadOnlyList<Product> products = await _repository.GetListAsync(specification);
 
-			return Map<List<ProductDto>>(products);
+			IReadOnlyList<ProductDto> data = Map<IReadOnlyList<ProductDto>>(products); ;
+
+			return new Pagination<ProductDto>(productParams.PageIndex, productParams.PageSize, totalItems, data);
 		}
 
 		[HttpGet]
