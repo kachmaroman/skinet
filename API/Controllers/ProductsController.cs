@@ -15,11 +15,19 @@ namespace API.Controllers
 {
 	public class ProductsController : BaseApiController
 	{
-		private readonly IGenericRepository<Product> _repository;
+		private readonly IGenericRepository<Product> _productsRepo;
+		private readonly IGenericRepository<ProductBrand> _brandRepo;
+		private readonly IGenericRepository<ProductType> _typesRepo;
 
-		public ProductsController(IGenericRepository<Product> repository, IMapper mapper) : base(mapper)
+		public ProductsController(IMapper mapper,
+			IGenericRepository<Product> productsRepo,
+			IGenericRepository<ProductBrand> brandRepo,
+			IGenericRepository<ProductType> typesRepo) : base(mapper)
 		{
-			_repository = repository;
+			_productsRepo = productsRepo;
+			_brandRepo = brandRepo;
+			_typesRepo = typesRepo;
+
 		}
 
 		[HttpGet]
@@ -30,9 +38,9 @@ namespace API.Controllers
 
 			ProductWithFiltersForCountSpecification countSpecification = new ProductWithFiltersForCountSpecification(productParams);
 
-			int totalItems = await _repository.CountAsync(countSpecification);
+			int totalItems = await _productsRepo.CountAsync(countSpecification);
 
-			IReadOnlyList<Product> products = await _repository.GetListAsync(specification);
+			IReadOnlyList<Product> products = await _productsRepo.GetListAsync(specification);
 
 			IReadOnlyList<ProductDto> data = Map<IReadOnlyList<ProductDto>>(products); ;
 
@@ -47,7 +55,7 @@ namespace API.Controllers
 		{
 			ProductsWithTypesAndBrandsSpecification specification = new ProductsWithTypesAndBrandsSpecification(id);
 
-			Product product = await _repository.GetEntityAsync(specification);
+			Product product = await _productsRepo.GetEntityAsync(specification);
 
 			if (product == null)
 			{
@@ -61,14 +69,14 @@ namespace API.Controllers
 		[Route("brands")]
 		public async Task<ActionResult<IReadOnlyList<ProductBrand>>> GetProductBrandsAsync()
 		{
-			return Ok(await _repository.GetAllAsync());
+			return Ok(await _brandRepo.GetAllAsync());
 		}
 
 		[HttpGet]
 		[Route("types")]
 		public async Task<ActionResult<IReadOnlyList<ProductType>>> GetProductTypesAsync()
 		{
-			return Ok(await _repository.GetAllAsync());
+			return Ok(await _typesRepo.GetAllAsync());
 		}
 	}
 }
