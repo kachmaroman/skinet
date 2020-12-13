@@ -1,3 +1,4 @@
+import { IProduct } from './../shared/models/product';
 import { IType } from './../shared/models/type';
 import { IBrand } from './../shared/models/brand';
 import { HttpClient, HttpParams } from '@angular/common/http';
@@ -44,5 +45,9 @@ export class ShopService {
 
   getTypes(): Observable<IType[]> {
     return this.http.get<IType[]>(this.baseUrl + 'products/types');
+  }
+
+  getProduct(id: number): Observable<IProduct> {
+    return this.http.get<IProduct>(this.baseUrl + 'products/' + id);
   }
 }
