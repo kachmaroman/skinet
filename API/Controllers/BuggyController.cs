@@ -1,40 +1,52 @@
-﻿using System;
-using API.Errors;
+﻿using API.Errors;
 using AutoMapper;
+using Infrastructure.Data;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
 	public class BuggyController : BaseApiController
 	{
-		public BuggyController(IMapper mapper) : base(mapper)
-		{ }
+		private readonly StoreContext _context;
+		public BuggyController(IMapper mapper, StoreContext context) : base(mapper)
+		{
+			_context = context;
+		}
 
-		[HttpGet]
-		[Route("notfound")]
+		[HttpGet("notfound")]
 		public ActionResult GetNotFoundRequest()
 		{
-			return NotFound(new ApiResponse(404));
-		}
+			var thing = _context.Products.Find(42);
 
-		[HttpGet]
-		[Route("badrequest")]
-		public ActionResult GetBadRequest()
-		{
-			return NotFound(new ApiResponse(400));
-		}
+			if (thing == null)
+			{
+				return NotFound(new ApiResponse(404));
+			}
 
-		[HttpGet("badrequest/{id}")]
-		public ActionResult GetNotFoundRequest(int id)
-		{
 			return Ok();
 		}
 
 		[HttpGet("servererror")]
 		public ActionResult GetServerError()
 		{
-			throw new NullReferenceException();
+			var thing = _context.Products.Find(42);
+
+			var thingToReturn = thing.ToString();
+
+			return Ok();
 		}
 
+		[HttpGet("badrequest")]
+		public ActionResult GetBadRequest()
+		{
+			return BadRequest(new ApiResponse(400));
+		}
+
+		[HttpGet("badrequest/{id}")]
+		public ActionResult GetBadRequest(int id)
+		{
+			return Ok();
+		}
 	}
 }
+
