@@ -12,11 +12,11 @@ import { ShopParams } from '../shared/models/shop-params';
 })
 export class ShopComponent implements OnInit {
 
-  @ViewChild('search', { static: true }) searchTerm: ElementRef;
+  @ViewChild('search', { static: false }) searchTerm: ElementRef;
 
-  private _products: IProduct[] = [];
-  private _brands: IBrand[] = [];
-  private _types: IType[] = [];
+  private _products: IProduct[];
+  private _brands: IBrand[];
+  private _types: IType[];
 
   private _shopParams = new ShopParams();
   private _totalCount: number;

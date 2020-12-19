@@ -7,7 +7,11 @@ import { ProductItemComponent } from './product-item/product-item.component';
 import { ProductDetailsComponent } from './product-details/product-details.component';
 
 @NgModule({
-  declarations: [ShopComponent, ProductItemComponent, ProductDetailsComponent],
+  declarations: [
+    ShopComponent,
+    ProductItemComponent,
+    ProductDetailsComponent
+  ],
   imports: [
     CommonModule,
     SharedModule,
