@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using StackExchange.Redis;
 
 namespace API
 {
@@ -28,14 +29,13 @@ namespace API
 
 			services.AddDbContext<StoreContext>(options => options.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
 
+			services.AddSingleton<IConnectionMultiplexer>(options => ConnectionMultiplexer.Connect(ConfigurationOptions.Parse(Configuration.GetConnectionString("Redis"), true)));
+
 			services.AddApplicationServices();
 
 			services.AddSwaggerDocumentation();
 
-			services.AddCors(options => options.AddPolicy("CorsPolicy", policy =>
-				{
-					policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("https://localhost:4200");
-				}));
+			services.AddCors(options => options.AddPolicy("CorsPolicy", policy => policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("https://localhost:4200")));
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -57,10 +57,7 @@ namespace API
 
 			app.UseSwaggerDocumention();
 
-			app.UseEndpoints(endpoints =>
-			{
-				endpoints.MapControllers();
-			});
+			app.UseEndpoints(endpoints => endpoints.MapControllers());
 		}
 	}
 }
