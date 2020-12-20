@@ -16,7 +16,8 @@ namespace API.Controllers
 		}
 
 		[HttpGet]
-		public async Task<ActionResult<CustomerBasket>> GetBasketByIdAsync([FromQuery] string id)
+		[Route("{id}")]
+		public async Task<ActionResult<CustomerBasket>> GetBasketByIdAsync([FromRoute] string id)
 		{
 			CustomerBasket basket = await _basketRepository.GetBasketAsync(id);
 
