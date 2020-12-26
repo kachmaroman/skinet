@@ -1,6 +1,7 @@
 ﻿using API.Errors;
 using AutoMapper;
 using Infrastructure.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -11,6 +12,14 @@ namespace API.Controllers
 		public BuggyController(IMapper mapper, StoreContext context) : base(mapper)
 		{
 			_context = context;
+		}
+
+		[HttpGet]
+		[Route("testauth")]
+		[Authorize]
+		public ActionResult<string> GetSecretTExt()
+		{
+			return "secret stuff";
 		}
 
 		[HttpGet("notfound")]

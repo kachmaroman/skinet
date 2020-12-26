@@ -17,33 +17,33 @@ namespace Infrastructure.Data
 			{
 				if (!context.ProductBrands.Any())
 				{
-					string brandsData = File.ReadAllText("../Infrastructure/Data/SeedData/brands.json");
+					string brandsData = await File.ReadAllTextAsync("../Infrastructure/Data/SeedData/brands.json");
 
 					List<ProductBrand> brands = JsonSerializer.Deserialize<List<ProductBrand>>(brandsData);
 
-					brands.ForEach(brand => context.ProductBrands.Add(brand));
+					brands?.ForEach(brand => context.ProductBrands.Add(brand));
 
 					await context.SaveChangesAsync();
 				}
 
 				if (!context.ProductTypes.Any())
 				{
-					string typesData = File.ReadAllText("../Infrastructure/Data/SeedData/types.json");
+					string typesData = await File.ReadAllTextAsync("../Infrastructure/Data/SeedData/types.json");
 
 					List<ProductType> types = JsonSerializer.Deserialize<List<ProductType>>(typesData);
 
-					types.ForEach(type => context.ProductTypes.Add(type));
+					types?.ForEach(type => context.ProductTypes.Add(type));
 
 					await context.SaveChangesAsync();
 				}
 
 				if (!context.Products.Any())
 				{
-					string productsData = File.ReadAllText("../Infrastructure/Data/SeedData/products.json");
+					string productsData = await File.ReadAllTextAsync("../Infrastructure/Data/SeedData/products.json");
 
 					List<Product> products = JsonSerializer.Deserialize<List<Product>>(productsData);
 
-					products.ForEach(product => context.Products.Add(product));
+					products?.ForEach(product => context.Products.Add(product));
 
 					await context.SaveChangesAsync();
 				}
