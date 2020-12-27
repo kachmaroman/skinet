@@ -1,6 +1,4 @@
-﻿using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using API.Dtos;
 using API.Errors;
 using API.Extensions;
@@ -36,10 +34,7 @@ namespace API.Controllers
 		{
 			AppUser user = await _userManager.FindByEmailFromClaimsPrinciple(HttpContext.User);
 
-			UserDto userDto = Map<UserDto>(user);
-			userDto.Token = _tokenService.CreateToken(user);
-
-			return userDto;
+			return Map<UserDto>(user);
 		}
 
 		[HttpGet]
@@ -96,16 +91,18 @@ namespace API.Controllers
 				return Unauthorized(new ApiResponse(401));
 			}
 
-			UserDto userDto = Map<UserDto>(user);
-			userDto.Token = _tokenService.CreateToken(user);
-
-			return userDto;
+			return Map<UserDto>(user);
 		}
 
 		[HttpPost]
 		[Route("register")]
 		public async Task<ActionResult<UserDto>> RegisterAsync([FromBody] RegisterDto registerDto)
 		{
+			if (CheckEmailExistAsync(registerDto.Email).Result.Value)
+			{
+				return new BadRequestObjectResult(new ApiValidationErrorResponse(new [] {"Email address is in use"}));
+			}
+
 			AppUser user = Map<AppUser>(registerDto);
 
 			IdentityResult result = await _userManager.CreateAsync(user, registerDto.Password);
@@ -115,10 +112,7 @@ namespace API.Controllers
 				return BadRequest(new ApiResponse(400));
 			}
 
-			UserDto userDto = Map<UserDto>(user);
-			userDto.Token = _tokenService.CreateToken(user);
-
-			return userDto;
+			return Map<UserDto>(user);
 		}
 	}
 }

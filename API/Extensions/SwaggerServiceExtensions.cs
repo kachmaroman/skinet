@@ -15,6 +15,26 @@ namespace API.Extensions
 					Title = "SkiNet API",
 					Version = "v1"
 				});
+
+				OpenApiSecurityScheme securitySchema = new()
+				{
+					Name = "Authorization",
+					Description = "JWT Auth Bearer Scheme",
+					In = ParameterLocation.Header,
+					Type = SecuritySchemeType.Http,
+					Scheme = "bearer",
+					Reference = new OpenApiReference
+					{
+						Type = ReferenceType.SecurityScheme,
+						Id = "Bearer"
+					}
+				};
+
+				OpenApiSecurityRequirement securityRequirement = new() { { securitySchema, new[] { "Bearer" } } };
+
+				options.AddSecurityDefinition("Bearer", securitySchema);
+
+				options.AddSecurityRequirement(securityRequirement);
 			});
 
 			return services;
