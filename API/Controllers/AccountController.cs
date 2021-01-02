@@ -4,7 +4,6 @@ using API.Errors;
 using API.Extensions;
 using AutoMapper;
 using Core.Entities.Identity;
-using Core.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -14,16 +13,13 @@ namespace API.Controllers
 {
 	public class AccountController : BaseApiController
 	{
-		private readonly ITokenService _tokenService;
 		private readonly UserManager<AppUser> _userManager;
 		private readonly SignInManager<AppUser> _signInManager;
 
 		public AccountController(IMapper mapper,
-								 ITokenService tokenService,
 								 UserManager<AppUser> userManager,
 								 SignInManager<AppUser> signInManager) : base(mapper)
 		{
-			_tokenService = tokenService;
 			_userManager = userManager;
 			_signInManager = signInManager;
 		}
