@@ -1,9 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Core.Entities;
+using Core.Entities.OrderAggregate;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Infrastructure.Data
 {
@@ -18,6 +21,12 @@ namespace Infrastructure.Data
 
 		public DbSet<ProductType> ProductTypes { get; set; }
 
+		public DbSet<Order> Orders { get; set; }
+
+		public DbSet<OrderItem> OrderItems { get; set; }
+
+		public DbSet<DeliveryMethod> DeliveryMethods { get; set; }	
+
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
 			base.OnModelCreating(modelBuilder);
@@ -27,11 +36,20 @@ namespace Infrastructure.Data
 			{
 				foreach (IMutableEntityType entityType in modelBuilder.Model.GetEntityTypes())
 				{
-					IEnumerable<PropertyInfo> properties = entityType.ClrType.GetProperties().Where(p => p.PropertyType == typeof(decimal));
+					IEnumerable<PropertyInfo> decimalProperties =
+						entityType.ClrType.GetProperties().Where(p => p.PropertyType == typeof(decimal));
 
-					foreach (PropertyInfo propertyInfo in properties)
+					IEnumerable<PropertyInfo> dateTimeOffsetProperties = entityType.ClrType.GetProperties()
+						.Where(p => p.PropertyType == typeof(DateTimeOffset));
+
+					foreach (PropertyInfo propertyInfo in decimalProperties)
 					{
 						modelBuilder.Entity(entityType.Name).Property(propertyInfo.Name).HasConversion<double>();
+					}
+
+					foreach (PropertyInfo propertyInfo in dateTimeOffsetProperties)
+					{
+						modelBuilder.Entity(entityType.Name).Property(propertyInfo.Name).HasConversion(new DateTimeOffsetToBinaryConverter());
 					}
 				}
 			}
