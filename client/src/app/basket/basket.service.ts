@@ -1,3 +1,4 @@
+import { IDeliveryMethod } from './../shared/models/delivery-method';
 import { IProduct } from './../shared/models/product';
 import { Basket, IBasket, IBasketItem, IBasketTotals } from './../shared/models/basket';
 import { HttpClient } from '@angular/common/http';
@@ -12,6 +13,8 @@ import { map } from 'rxjs/operators';
 export class BasketService {
   baseUrl: string = environment.apiUrl;
 
+  shipping: number = 0;
+
   private basketSource = new BehaviorSubject<IBasket>(null);
   public get basket$(): Observable<IBasket> {
     return this.basketSource.asObservable();
@@ -23,6 +26,11 @@ export class BasketService {
   }
 
   constructor(private http: HttpClient) { }
+
+  setShippingPrice(deliveryMethod: IDeliveryMethod): void {
+    this.shipping = deliveryMethod.price;
+    this.calculateTotals();
+  }
 
   getBasket(id: string): Observable<IBasket> {
     return this.http.get<IBasket>(`${this.baseUrl}basket/${id}`)
@@ -96,9 +104,15 @@ export class BasketService {
     });
   }
 
+  deleteLocalBasket(): void {
+    this.basketSource.next(null);
+    this.basketTotalSource.next(null);
+    localStorage.removeItem('basket_id');
+  }
+
   private calculateTotals() {
     const basket: IBasket = this.getCurrentBasketValue();
-    const shipping: number = 0;
+    const shipping: number = this.shipping;
     const subtotal: number = basket.items.reduce((prev, next) => prev + (next.price * next.quantity), 0);
     const total: number = shipping  + subtotal;
 
